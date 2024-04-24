@@ -19,16 +19,16 @@ object Main {
     // Read a JSON data source with the path "./data-news-json"
     // Tips : https://spark.apache.org/docs/latest/sql-data-sources-json.html
     val pathToJsonData = "./data-news-json/"
-    val newsDataframe: DataFrame = ??? //@TODO
+    val newsDataframe: DataFrame = spark.read.json(pathToJsonData) //@TODO
 
     // To type our dataframe as News, we can use the Dataset API : https://spark.apache.org/docs/latest/sql-getting-started.html#creating-datasets
     val newsDatasets: Dataset[News] = NewsService.read(pathToJsonData)
 
     // print the dataset schema - tips : https://spark.apache.org/docs/latest/sql-getting-started.html#untyped-dataset-operations-aka-dataframe-operations
-    //@TODO newsDatasets.???
+    newsDatasets.printSchema() //@TODO
 
     // Show the first 10 elements - tips : https://spark.apache.org/docs/latest/sql-getting-started.html#creating-dataframes
-    //@TODO newsDatasets.???
+    newsDatasets.show(10)//@TODO
 
     // Enrich the dataset by apply the ClimateService.isClimateRelated function to the title and the description of a news
     // a assign this value to the "containsWordGlobalWarming" attribute
@@ -43,10 +43,11 @@ object Main {
 
     // Show how many news we have talking about climate change compare to others news (not related climate)
     // Tips: use a groupBy
-
+    newsDatasets.groupBy("containsWordGlobalWarming").count.show()
 
     // Use SQL to query a "news" table - look at : https://spark.apache.org/docs/latest/sql-getting-started.html#running-sql-queries-programmatically
-
+    val newsTable = spark.sql("SELECT containsWordGlobalWarming, COUNT(*) AS count FROM news GROUP BY containsWordGlobalWarming")
+    newsTable.show()
 
     // Use strongly typed dataset to be sure to not introduce a typo to your SQL Query
     // Tips : https://stackoverflow.com/a/46514327/3535853
