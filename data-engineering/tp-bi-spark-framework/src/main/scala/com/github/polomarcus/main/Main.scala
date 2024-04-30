@@ -37,8 +37,8 @@ object Main {
     logger.info(s"We have ${count} news in our dataset")
 
     //@TODO Save using PostgresService.save function
-    ???
-    
+    PostgresService.save(enrichedDataset)
+
     logger.info("Stopping the app")
     spark.stop()
     System.exit(0)
